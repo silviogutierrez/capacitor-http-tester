@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "esbuild src/index.tsx --bundle --outfile=www/index.js && cap copy"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "@capacitor/cli": "^4.6.1",
     "@capacitor/core": "^4.6.1",
     "@capacitor/ios": "^4.6.1",
+    "esbuild": "^0.16.8",
     "typescript": "^4.9.4"
   }
 }
