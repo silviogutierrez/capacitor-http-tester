@@ -8,7 +8,10 @@ declare global {
     }
 }
 
-const BASE_URL = Capacitor.getPlatform() == "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
+const BASE_URL =
+    Capacitor.getPlatform() == "android"
+        ? "http://10.0.2.2:3000"
+        : "http://localhost:3000";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -23,6 +26,13 @@ const simple = async () => {
     return JSON.stringify(await response.json()) == '{"thisThing":"Works"}';
 };
 
+const requestObject = async () => {
+    const request = new Request(`${BASE_URL}/api/simple/`);
+    const response = await fetch(request);
+    return JSON.stringify(await response.json()) == '{"thisThing":"Works"}';
+};
+requestObject.issue = "6174";
+
 const serializingHeaders = async () => {
     const response = await fetch(`${BASE_URL}/api/headers/`, {
         headers: new Headers({"X-Some-Header": "Working"}),
@@ -30,6 +40,7 @@ const serializingHeaders = async () => {
     const {header} = await response.json();
     return header == "Working";
 };
+serializingHeaders.issue = "5945";
 
 const responseHeaders = async () => {
     const response = await fetch(`${BASE_URL}/api/simple/`);
@@ -54,6 +65,7 @@ const urlEncoded = async () => {
 
     return JSON.stringify(await response.json()) == '{"some":"value"}';
 };
+urlEncoded.issue = "6165";
 
 const multipartEncoded = async () => {
     const body = new FormData();
@@ -66,31 +78,37 @@ const multipartEncoded = async () => {
     const {result} = await response.json();
     return result == "itdoes";
 };
+multipartEncoded.issue = "6142";
 
 const numberResponse = async () => {
     const response = await fetch(`${BASE_URL}/api/number/`);
     return (await response.json()) == 5;
 };
+numberResponse.issue = "6170";
 
 const stringResponse = async () => {
     const response = await fetch(`${BASE_URL}/api/string/`);
     return (await response.json()) == "a string";
 };
+stringResponse.issue = "6170";
 
 const nullResponse = async () => {
     const response = await fetch(`${BASE_URL}/api/null/`);
     return (await response.json()) == null;
 };
+nullResponse.issue = "6170";
 
 const trueResponse = async () => {
     const response = await fetch(`${BASE_URL}/api/true/`);
     return (await response.json()) == true;
 };
+trueResponse.issue = "6170";
 
 const falseResponse = async () => {
     const response = await fetch(`${BASE_URL}/api/false/`);
     return (await response.json()) == false;
 };
+falseResponse.issue = "6170";
 
 const readCookie = async () => {
     const cookieName = makeRandomString();
@@ -107,6 +125,7 @@ const readBlob = async () => {
     const {size} = await response.blob();
     return size == 33788;
 };
+readBlob.issue = "6126";
 
 const badRequest = async () => {
     const response = await fetch(`${BASE_URL}/api/400/`);
@@ -123,7 +142,10 @@ const networkError = async () => {
     }
 };
 
-type TestCase = () => Promise<boolean>;
+interface TestCase {
+    (): Promise<boolean>;
+    issue?: string;
+}
 
 const Test = (props: {name: string; test: TestCase}) => {
     const [passed, setPassed] = React.useState(false);
@@ -139,7 +161,16 @@ const Test = (props: {name: string; test: TestCase}) => {
 
     return (
         <div style={{lineHeight: 1}}>
-            <h3 style={{marginTop: 0, marginBottom: 0}}>{props.name}</h3>
+            <h3 style={{marginTop: 0, marginBottom: 0}}>
+                {props.name}{" "}
+                {props.test.issue != null && (
+                    <a
+                        href={`https://github.com/ionic-team/capacitor/issues/${props.test.issue}/`}
+                    >
+                        #{props.test.issue}
+                    </a>
+                )}
+            </h3>
             {passed == true && (
                 <h5 style={{marginTop: 0, marginBottom: 0, color: "green"}}>Passed</h5>
             )}
@@ -165,6 +196,7 @@ root.render(
         <Tests
             tests={{
                 simple,
+                requestObject,
                 serializingHeaders,
                 responseHeaders,
                 cookie,
