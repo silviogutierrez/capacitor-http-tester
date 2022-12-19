@@ -1,7 +1,13 @@
 import express from 'express';
 import path from "path";
+import cookieParser from "cookie-parser";
+import multer from 'multer';
 
 const app = express()
+const upload = multer()
+app.use(cookieParser());
+app.use(express.urlencoded({extended: true}))
+
 const port = 3000
 
 app.get('/', (req, res) => {
@@ -12,13 +18,53 @@ app.get('/index.js', (req, res) => {
   res.sendFile(path.join(__dirname, '/www/index.js'));
 })
 
+app.post('/api/body/', (req, res) => {
+  res.json(req.body);
+})
+
 app.get('/api/simple/', (req, res) => {
   res.json({ thisThing: 'Works' })
 })
 
-app.get('/api/cookie/', (req, res) => {
-  res.cookie('cookie', 'test');
+app.get('/api/headers/', (req, res) => {
+  res.json({ header: req.headers["x-some-header"]})
+})
+
+app.post('/api/multipart/', upload.none(), (req, res) => {
+  res.json({result: req.body.doesthiswork});
+})
+
+app.get('/api/number/', (req, res) => {
+  res.json(5);
+})
+
+app.get('/api/string/', (req, res) => {
+  res.json("a string");
+})
+
+app.get('/api/null/', (req, res) => {
+  res.json(null);
+})
+
+app.get('/api/true/', (req, res) => {
+  res.json(true);
+})
+
+app.get('/api/false/', (req, res) => {
+  res.json(false);
+})
+
+app.get('/api/cookie/:value/', (req, res) => {
+  res.cookie('cookie', req.params.value);
   res.json({ cookie: 'was set' })
+})
+
+app.get('/api/read-cookie/:cookieName/', (req, res) => {
+  res.json({value: req.cookies[req.params.cookieName]});
+})
+
+app.get('/api/blob/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/www/cat.jpeg'));
 })
 
 app.listen(port, () => {
