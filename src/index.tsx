@@ -91,6 +91,22 @@ const readBlob = async () => {
     alert(size == 33788);
 }
 
+const badRequest = async () => {
+    const response = await fetch("http://localhost:3000/api/400/");
+    const {thisField} = await response.json();
+    alert(response.status == 400 && thisField == "is required");
+}
+
+const networkError = async () => {
+    try {
+        const response = await fetch("https://nowaythisworks");
+        alert(false);
+    }
+    catch (error: unknown) {
+        alert(true);
+    }
+}
+
 root.render(
     <div>
         <button onClick={simple}>Simple</button>
@@ -106,5 +122,7 @@ root.render(
         <button onClick={falseResponse}>False response</button>
         <button onClick={readCookie}>Read Cookie</button>
         <button onClick={readBlob}>Read Blob</button>
+        <button onClick={badRequest}>Bad request</button>
+        <button onClick={networkError}>Network error</button>
     </div>,
 );

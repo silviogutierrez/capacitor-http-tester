@@ -67,6 +67,10 @@ app.get('/api/blob/', (req, res) => {
   res.sendFile(path.join(__dirname, '/www/cat.jpeg'));
 })
 
+app.get('/api/400/', (req, res) => {
+  res.status(400).json({thisField: "is required"});
+})
+
 app.listen(port, () => {
   console.log(`Test app listening on port ${port}`)
 })
