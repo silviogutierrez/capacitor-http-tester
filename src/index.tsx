@@ -1,5 +1,14 @@
 import * as React from "react";
 import {createRoot} from "react-dom/client";
+import {Capacitor} from "@capacitor/core";
+
+declare global {
+    interface Window {
+        cordova?: unknown;
+    }
+}
+
+const BASE_URL = Capacitor.getPlatform() == "android" ? "http://10.0.2.2:3000" : "http://localhost:3000";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -10,12 +19,12 @@ const setCookie = (name: string, value: string) => {
 };
 
 const simple = async () => {
-    const response = await fetch("http://localhost:3000/api/simple/");
+    const response = await fetch(`${BASE_URL}/api/simple/`);
     return JSON.stringify(await response.json()) == '{"thisThing":"Works"}';
 };
 
 const serializingHeaders = async () => {
-    const response = await fetch("http://localhost:3000/api/headers/", {
+    const response = await fetch(`${BASE_URL}/api/headers/`, {
         headers: new Headers({"X-Some-Header": "Working"}),
     });
     const {header} = await response.json();
@@ -23,19 +32,19 @@ const serializingHeaders = async () => {
 };
 
 const responseHeaders = async () => {
-    const response = await fetch("http://localhost:3000/api/simple/");
+    const response = await fetch(`${BASE_URL}/api/simple/`);
     return response.headers instanceof Headers;
 };
 
 const cookie = async () => {
     const toSet = makeRandomString();
-    const response = await fetch(`http://localhost:3000/api/cookie/${toSet}/`);
+    const response = await fetch(`${BASE_URL}/api/cookie/${toSet}/`);
     return document.cookie.includes(toSet);
 };
 
 const urlEncoded = async () => {
     const payload = {some: "value"};
-    const response = await fetch(`http://localhost:3000/api/body/`, {
+    const response = await fetch(`${BASE_URL}/api/body/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -49,7 +58,7 @@ const urlEncoded = async () => {
 const multipartEncoded = async () => {
     const body = new FormData();
     body.append("doesthiswork", "itdoes");
-    const response = await fetch(`http://localhost:3000/api/multipart/`, {
+    const response = await fetch(`${BASE_URL}/api/multipart/`, {
         method: "POST",
         body,
     });
@@ -59,27 +68,27 @@ const multipartEncoded = async () => {
 };
 
 const numberResponse = async () => {
-    const response = await fetch(`http://localhost:3000/api/number/`);
+    const response = await fetch(`${BASE_URL}/api/number/`);
     return (await response.json()) == 5;
 };
 
 const stringResponse = async () => {
-    const response = await fetch(`http://localhost:3000/api/string/`);
+    const response = await fetch(`${BASE_URL}/api/string/`);
     return (await response.json()) == "a string";
 };
 
 const nullResponse = async () => {
-    const response = await fetch(`http://localhost:3000/api/null/`);
+    const response = await fetch(`${BASE_URL}/api/null/`);
     return (await response.json()) == null;
 };
 
 const trueResponse = async () => {
-    const response = await fetch(`http://localhost:3000/api/true/`);
+    const response = await fetch(`${BASE_URL}/api/true/`);
     return (await response.json()) == true;
 };
 
 const falseResponse = async () => {
-    const response = await fetch(`http://localhost:3000/api/false/`);
+    const response = await fetch(`${BASE_URL}/api/false/`);
     return (await response.json()) == false;
 };
 
@@ -88,19 +97,19 @@ const readCookie = async () => {
     const cookieValue = makeRandomString();
     setCookie(cookieName, cookieValue);
 
-    const response = await fetch(`http://localhost:3000/api/read-cookie/${cookieName}`);
+    const response = await fetch(`${BASE_URL}/api/read-cookie/${cookieName}`);
     const {value} = await response.json();
     return value == cookieValue;
 };
 
 const readBlob = async () => {
-    const response = await fetch("http://localhost:3000/api/blob/");
+    const response = await fetch(`${BASE_URL}/api/blob/`);
     const {size} = await response.blob();
     return size == 33788;
 };
 
 const badRequest = async () => {
-    const response = await fetch("http://localhost:3000/api/400/");
+    const response = await fetch(`${BASE_URL}/api/400/`);
     const {thisField} = await response.json();
     return response.status == 400 && thisField == "is required";
 };
