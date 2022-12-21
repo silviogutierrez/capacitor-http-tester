@@ -34,6 +34,12 @@ app.post("/api/multipart/", upload.none(), (req, res) => {
     res.json({result: req.body.doesthiswork});
 });
 
+app.get("/api/text/", (req, res) => {
+    res.json(
+        "I am text, content type should not take precendece over calling response.text()",
+    );
+});
+
 app.get("/api/number/", (req, res) => {
     res.json(5);
 });

@@ -80,6 +80,15 @@ const multipartEncoded = async () => {
 };
 multipartEncoded.issue = "6142";
 
+const readText = async () => {
+    const response = await fetch(`${BASE_URL}/api/text/`);
+    return (
+        (await response.text()) ==
+        '"I am text, content type should not take precendece over calling response.text()"'
+    );
+};
+readText.issue = "6184";
+
 const numberResponse = async () => {
     const response = await fetch(`${BASE_URL}/api/number/`);
     return (await response.json()) == 5;
@@ -202,6 +211,7 @@ root.render(
                 cookie,
                 urlEncoded,
                 multipartEncoded,
+                readText,
                 numberResponse,
                 stringResponse,
                 nullResponse,
