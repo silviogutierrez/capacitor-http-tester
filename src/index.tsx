@@ -130,6 +130,7 @@ const readCookieSetOnClient = async () => {
     const {value} = data;
     return value == cookieValue;
 };
+readCookieSetOnClient.issue = "6196";
 
 const deleteServerSetCookie = async () => {
     const cookieName = makeRandomString();
