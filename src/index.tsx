@@ -142,6 +142,7 @@ const deleteServerSetCookie = async () => {
     const {value} = await response.json();
     return value == null;
 };
+readCookieSetOnClient.issue = "6197";
 
 const readBlob = async () => {
     const response = await fetch(`${BASE_URL}/api/blob/`);
