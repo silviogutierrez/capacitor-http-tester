@@ -48,9 +48,10 @@ const responseHeaders = async () => {
 };
 
 const cookie = async () => {
-    const toSet = makeRandomString();
-    const response = await fetch(`${BASE_URL}/api/cookie/${toSet}/`);
-    return document.cookie.includes(toSet);
+    const name = makeRandomString();
+    const value = makeRandomString();
+    const response = await fetch(`${BASE_URL}/api/cookie/${name}/${value}/`);
+    return document.cookie.includes(value);
 };
 
 const urlEncoded = async () => {
@@ -119,14 +120,26 @@ const falseResponse = async () => {
 };
 falseResponse.issue = "6170";
 
-const readCookie = async () => {
+const readCookieSetOnClient = async () => {
     const cookieName = makeRandomString();
     const cookieValue = makeRandomString();
     setCookie(cookieName, cookieValue);
 
     const response = await fetch(`${BASE_URL}/api/read-cookie/${cookieName}`);
-    const {value} = await response.json();
+    const data = await response.json();
+    const {value} = data;
     return value == cookieValue;
+};
+
+const deleteServerSetCookie = async () => {
+    const cookieName = makeRandomString();
+    const cookieValue = makeRandomString();
+
+    await fetch(`${BASE_URL}/api/cookie/${cookieName}/${cookieValue}`);
+    document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    const response = await fetch(`${BASE_URL}/api/read-cookie/${cookieName}`);
+    const {value} = await response.json();
+    return value == null;
 };
 
 const readBlob = async () => {
@@ -217,7 +230,8 @@ root.render(
                 nullResponse,
                 trueResponse,
                 falseResponse,
-                readCookie,
+                readCookieSetOnClient,
+                deleteServerSetCookie,
                 readBlob,
                 badRequest,
                 networkError,

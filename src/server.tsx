@@ -60,8 +60,8 @@ app.get("/api/false/", (req, res) => {
     res.json(false);
 });
 
-app.get("/api/cookie/:value/", (req, res) => {
-    res.cookie("cookie", req.params.value);
+app.get("/api/cookie/:name/:value/", (req, res) => {
+    res.cookie(req.params.name, req.params.value);
     res.json({cookie: "was set"});
 });
 
